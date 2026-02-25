@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Iftar Mahfil 2026 | CU Management</title>
+    
+    <!-- 
+      CONFIG: FONTS 
+      You can change these Google Font links if you want a different typography style.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- CDNs: Do not remove these as they power the styling, icons, and interactivity -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+
+    <script>
+        // CONFIG: COLORS & THEME
+        // You can change the hex codes here to adjust the brand colors globally.
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: '#800000', // Primary Brand Color
+                        cream: '#F5E6BE',  // Background/Accent Color
+                        'dark-brown': '#3D2B1F', // Dark Section Background
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style type="text/css">
+        body {
+            background-color: #3D2B1F;
+            color: #F5E6BE;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* CONFIG: BACKGROUND PATTERN 
+           This is an SVG encoded pattern. You can replace the 'fill' color code (%23F5E6BE) to match your theme.
+        */
+        .islamic-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l5.878 18.09h19.022l-15.39 11.18 5.878 18.09-15.388-11.18-15.39 11.18 5.878-18.09-15.39-11.18h19.022L30 0z' fill='%23F5E6BE' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #3D2B1F; }
+        ::-webkit-scrollbar-thumb { background: #800000; border-radius: 10px; }
+        
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 60s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { motion, AnimatePresence } = window.Motion;
+
+        // --- CONFIGURATION: GOOGLE SHEETS URL ---
+        // Replace this URL with your actual Google Apps Script Web App URL.
+        // Make sure your script is deployed as "Anyone" can access.
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxThgf4DU6JhYyfMg0KqAUb6jkqRZbxG4ItmIVgCl1BV-npyzsu08Xmn7TSSbJ7Xg-PtA/exec";
+
+        const Icon = ({ name, size = 24, className = "" }) => {
+            const iconRef = useRef(null);
+            useEffect(() => {
+                if (iconRef.current) {
+                    lucide.createIcons({ targets: [iconRef.current] });
+                }
+            }, [name]);
+            return <i ref={iconRef} data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
+        };
+
+        const Navbar = () => {
+            const [isScrolled, setIsScrolled] = useState(false);
+            const [isOpen, setIsOpen] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => setIsScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const links = [
+                { name: 'Home', href: '#home' },
+                { name: 'Info', href: '#info' },
+                { name: 'Register', href: '#register' },
+                { name: 'Game', href: '#game' },
+                { name: 'Logistics', href: '#logistics' },
+            ];
+
+            return (
+                <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-[#800000]/90 backdrop-blur-md py-3 shadow-lg' : 'bg-transparent py-6'}`}>
+                    <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 bg-[#F5E6BE] rounded-full flex items-center justify-center text-[#800000] font-bold text-xl">M</div>
+                            <span className="font-serif text-xl font-bold text-[#F5E6BE] hidden sm:block">CU Management</span>
+                        </div>
+                        <div className="hidden md:flex items-center gap-8">
+                            {links.map(l => (
+                                <a key={l.name} href={l.href} className="text-[#F5E6BE]/80 hover:text-[#F5E6BE] text-sm font-medium uppercase tracking-widest transition-colors">{l.name}</a>
+                            ))}
+                            <a href="#register" className="bg-[#F5E6BE] text-[#800000] px-6 py-2 rounded-full font-bold hover:bg-white transition-all transform hover:scale-105">Register</a>
+                        </div>
+                        <button className="md:hidden text-[#F5E6BE]" onClick={() => setIsOpen(!isOpen)}>
+                            <Icon name={isOpen ? "x" : "menu"} size={28} />
+                        </button>
+                    </div>
+                    <AnimatePresence>
+                        {isOpen && (
+                            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="md:hidden absolute top-full left-0 w-full bg-[#800000] p-6 flex flex-col gap-4 shadow-2xl">
+                                {links.map(l => (
+                                    <a key={l.name} href={l.href} onClick={() => setIsOpen(false)} className="text-[#F5E6BE] text-lg font-serif">{l.name}</a>
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </nav>
+            );
+        };
+
+        const Countdown = () => {
+            // CONFIG: COUNTDOWN TARGET DATE
+            // Change the date string below to your event's exact date and time.
+            const target = new Date('2026-03-06T18:00:00').getTime();
+            const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
+
+            useEffect(() => {
+                const timer = setInterval(() => {
+                    const now = new Date().getTime();
+                    const diff = target - now;
+                    if (diff < 0) return clearInterval(timer);
+                    setTimeLeft({
+                        d: Math.floor(diff / (1000 * 60 * 60 * 24)),
+                        h: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                        m: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+                        s: Math.floor((diff % (1000 * 60)) / 1000)
+                    });
+                }, 1000);
+                return () => clearInterval(timer);
+            }, []);
+
+            const Unit = ({ val, label }) => (
+                <div className="flex flex-col items-center">
+                    <div className="glass w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center rounded-2xl mb-2">
+                        <span className="text-2xl sm:text-4xl font-bold text-[#F5E6BE]">{val.toString().padStart(2, '0')}</span>
+                    </div>
+                    <span className="text-[10px] sm:text-xs uppercase tracking-widest text-[#F5E6BE]/60">{label}</span>
+                </div>
+            );
+
+            return (
+                <div className="flex gap-4 sm:gap-8 mt-12">
+                    <Unit val={timeLeft.d} label="Days" />
+                    <Unit val={timeLeft.h} label="Hours" />
+                    <Unit val={timeLeft.m} label="Minutes" />
+                    <Unit val={timeLeft.s} label="Seconds" />
+                </div>
+            );
+        };
+
+        const Hero = () => (
+            <section id="home" className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-20 overflow-hidden islamic-pattern">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-10 pointer-events-none">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full animate-spin-slow">
+                        <path fill="currentColor" d="M100 0 L110 40 L150 50 L110 60 L100 100 L90 60 L50 50 L90 40 Z" />
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
+                    </svg>
+                </div>
+                <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="z-10">
+                    <span className="text-[#800000] bg-[#F5E6BE] px-4 py-1 rounded-full text-sm font-bold tracking-widest uppercase mb-6 inline-block">University of Chittagong</span>
+                    <h1 className="text-5xl sm:text-7xl md:text-8xl font-serif font-bold text-[#F5E6BE] mb-6 leading-tight">Grand Iftar <br /> <span className="text-[#800000] bg-[#F5E6BE] px-4 inline-block transform -rotate-2">Mahfil 2026</span></h1>
+                    <p className="text-lg sm:text-2xl italic font-serif text-[#F5E6BE]/80 max-w-2xl mx-auto mb-8">"A Symphony of Hearts, A Harvest of Blessings"</p>
+                    <div className="flex flex-wrap justify-center gap-6 text-[#F5E6BE]/90 mb-12">
+                        <div className="flex items-center gap-2"><Icon name="calendar" size={20} /><span>March 6, 2026</span></div>
+                        <div className="flex items-center gap-2"><Icon name="clock" size={20} /><span>5:30 PM Onwards</span></div>
+                        <div className="flex items-center gap-2"><Icon name="map-pin" size={20} /><span>Iqbal Convention Hall</span></div>
+                    </div>
+                    <Countdown />
+                    <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#register" className="bg-[#800000] text-[#F5E6BE] px-10 py-4 rounded-full font-bold text-lg hover:bg-[#800000]/80 transition-all shadow-2xl flex items-center justify-center gap-2 group">Secure Your Seat <Icon name="chevron-right" className="group-hover:translate-x-1 transition-transform" /></a>
+                        <a href="#game" className="glass text-[#F5E6BE] px-10 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all flex items-center justify-center gap-2"><Icon name="gamepad-2" />Play Mini Game</a>
+                    </div>
+                </motion.div>
+            </section>
+        );
+
+        const InfoSection = () => (
+            <section id="info" className="py-24 bg-[#F5E6BE] text-[#3D2B1F]">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl sm:text-5xl font-serif font-bold mb-4">Event Information</h2>
+                        <div className="w-24 h-1 bg-[#800000] mx-auto"></div>
+                    </div>
+                    
+                    <div className="grid lg:grid-cols-2 gap-12">
+                        <div className="space-y-8">
+                            {/* CONFIG: WELCOME MESSAGE 
+                                Update the text below to change the welcome message.
+                            */}
+                            <div className="bg-white p-8 rounded-3xl shadow-xl border-l-8 border-[#800000]">
+                                <h3 className="text-2xl font-serif font-bold text-[#800000] mb-4">Dear Former Students</h3>
+                                <p className="text-lg leading-relaxed opacity-80 mb-4">Assalamualaikum. Ramadan Kareem!</p>
+                                <p className="text-md leading-relaxed opacity-80">You're requested to fill the form below as a part of the registration process for <strong>"Grand Iftar Mahfil-2026"</strong>, organized by the Department of Management, University of Chittagong.</p>
+                                <p className="mt-4 font-bold">We are expecting your presence on 6th March, 2026.</p>
+                            </div>
+
+                            {/* CONFIG: PAYMENT DETAILS 
+                                Update the phone numbers and account details below.
+                            */}
+                            <div className="bg-white p-8 rounded-3xl shadow-xl">
+                                <h3 className="text-xl font-bold text-[#800000] mb-4 flex items-center gap-2"><Icon name="credit-card" /> Payment Details</h3>
+                                <div className="space-y-4 text-sm">
+                                    <div className="flex justify-between border-b pb-2"><span>Registration Fee</span><span className="font-bold">800 Taka</span></div>
+                                    <div className="flex justify-between border-b pb-2"><span>Guest Fee</span><span className="font-bold">400 Taka (per guest)</span></div>
+                                    <div className="pt-2 space-y-2">
+                                        <p><strong>BKash:</strong> 01868034529 (Gani, CU 54th batch)</p>
+                                        <p><strong>BKash/Nagad:</strong> 01737303412 (Maruf, CU 54th batch)</p>
+                                        <p><strong>Rocket:</strong> 017373034120 (Maruf, CU 54th batch)</p>
+                                    </div>
+                                    <div className="pt-4 border-t">
+                                        <p className="font-bold text-[#800000]">Bank Account:</p>
+                                        <p>A/C Name: Md Mahmudul Hasan</p>
+                                        <p>A/C No: 20506516700008303</p>
+                                        <p>Islami Bank Bangladesh Ltd, East Nasirabd Sub Branch.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-8">
+                            {/* CONFIG: CONTACT NUMBERS 
+                                Update the names and numbers for the organizers.
+                            */}
+                            <div className="bg-[#800000] text-[#F5E6BE] p-8 rounded-3xl shadow-2xl">
+                                <h3 className="text-xl font-bold mb-6 flex items-center gap-2"><Icon name="phone" /> Contact Queries</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                    <p>Md Ahasun Gani: <br/><strong>01868034529</strong></p>
+                                    <p>Md Mahmudul Hasan Maruf: <br/><strong>01737303412</strong></p>
+                                    <p>Shihab Chowdhury: <br/><strong>01880821129</strong></p>
+                                    <p>Tauhid Mahmud: <br/><strong>01746525869</strong></p>
+                                    <p>Nafis Fuad Ayon: <br/><strong>01521438943</strong></p>
+                                </div>
+                            </div>
+
+                            <div className="bg-white p-8 rounded-3xl shadow-xl border-l-8 border-[#800000]">
+                                <h3 className="text-xl font-bold text-[#800000] mb-4 flex items-center gap-2"><Icon name="map-pin" /> Venue</h3>
+                                <p className="font-bold">Iqbal Convention Hall, Roufabad.</p>
+                                <p className="text-sm opacity-60">(Near Oxygen Circle, Muradpur - Oxygen Road)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+
+        const Register = () => {
+            // CONFIG: FORM STATE
+            // These keys must match the headers in your Google Sheet.
+            const [form, setForm] = useState({ 
+                Name: '', 
+                Session_Batch: '', 
+                Phone: '', 
+                Email: '', 
+                Guests: '0', 
+                Amount: '', 
+                Profession: '', 
+                Designation: '', 
+                Organization: '', 
+                Transaction_ID: '' 
+            });
+            const [loading, setLoading] = useState(false);
+            const [success, setSuccess] = useState(false);
+            const [error, setError] = useState(false);
+
+            const submit = async (e) => {
+                e.preventDefault();
+                setLoading(true);
+                setError(false);
+                
+                const formData = new FormData();
+                Object.keys(form).forEach(key => formData.append(key, form[key]));
+                formData.append("Timestamp", new Date().toLocaleString());
+
+                try {
+                    const response = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.result === 'success') {
+                        setSuccess(true);
+                    } else {
+                        setError(true);
+                    }
+                } catch (err) {
+                    console.error("Submission Error:", err);
+                    setError(true);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <section id="register" className="py-24 bg-[#3D2B1F] text-[#F5E6BE] islamic-pattern">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl sm:text-5xl font-serif font-bold mb-4">Registration Portal</h2>
+                            <p className="opacity-70">Please fill out all fields accurately to ensure your seat.</p>
+                        </div>
+
+                        <div className="glass p-8 sm:p-12 rounded-[2.5rem] shadow-2xl max-w-4xl mx-auto">
+                            <form onSubmit={submit} className="space-y-6">
+                                {/* FORM FIELD: NAME */}
+                                <div className="grid sm:grid-cols-2 gap-6">
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] uppercase tracking-widest opacity-50 ml-2">Full Name</label>
+                                        <input required type="text" placeholder="Your Name" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#F5E6BE]" onChange={e => setForm({...form, Name: e.target.value})} />
+                                    </div>
+                                    {/* FORM FIELD: BATCH */}
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] uppercase tracking-widest opacity-50 ml-2">Session / CU Batch No</label>
+                                        <input required type="text" placeholder="e.g. 54th Batch" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#F5E6BE]" onChange={e => setForm({...form, Session_Batch: e.target.value})} />
+                                    </div>
+                                </div>
+
+                                <div className="grid sm:grid-cols-2 gap-6">
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] uppercase tracking-widest opacity-50 ml-2">Phone Number</label>
+                                        <input required type="tel" placeholder="01XXX-XXXXXX" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#F5E6BE]" onChange={e => setForm({...form, Phone: e.target.value})} />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] uppercase tracking-widest opacity-50 ml-2">Email Address</label>
+                                        <input required type="email" placeholder="email@example.com" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#F5E6BE]" onChange={e => setForm({...form, Email: e.target.value})} />
+                                    </div>
+                                </div>
+
+                                <div className="grid sm:grid-cols-2 gap-6">
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] uppercase tracking-widest opacity-50 ml-2">Number of Guests (400 Taka each)</label>
+                                        <input required type="number" min="0" placeholder="0" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#F5E6BE]" onChange={e => setForm({...form, Guests: e.target.value})} />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] uppercase tracking-widest opacity-50 ml-2">Total Amount Paid</label>
+                                        <input required type="number" placeholder="800 + (Guests * 400)" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#F5E6BE]" onChange={e => setForm({...form, Amount: e.target.value})} />
+                                    </div>
+                                </div>
+
+                                <div className="grid sm:grid-cols-3 gap-6">
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] uppercase tracking-widest opacity-50 ml-2">Profession</label>
+                                        <input required type="text" placeholder="Profession" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#F5E6BE]" onChange={e => setForm({...form, Profession: e.target.value})} />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] uppercase tracking-widest opacity-50 ml-2">Designation</label>
+                                        <input required type="text" placeholder="Designation" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#F5E6BE]" onChange={e => setForm({...form, Designation: e.target.value})} />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] uppercase tracking-widest opacity-50 ml-2">Organization</label>
+                                        <input required type="text" placeholder="Organization" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#F5E6BE]" onChange={e => setForm({...form, Organization: e.target.value})} />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1">
+                                    <label className="text-[10px] uppercase tracking-widest opacity-50 ml-2">Transaction ID (bKash/Nagad/Rocket)</label>
+                                    <input required type="text" placeholder="TRX-XXXXXX" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#F5E6BE]" onChange={e => setForm({...form, Transaction_ID: e.target.value})} />
+                                </div>
+
+                                {error && <p className="text-red-400 text-center text-sm">Submission failed. Please check your connection and try again.</p>}
+
+                                <button disabled={loading} className="w-full bg-[#800000] text-[#F5E6BE] py-5 rounded-2xl font-bold text-xl hover:bg-[#800000]/80 transition-all shadow-2xl flex items-center justify-center gap-3">
+                                    {loading ? <div className="w-6 h-6 border-2 border-[#F5E6BE] border-t-transparent rounded-full animate-spin"></div> : 'Submit Registration'}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {/* CONFIG: SUCCESS MODAL 
+                        This modal appears after a successful Google Sheet sync.
+                    */}
+                    <AnimatePresence>
+                        {success && (
+                            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                                <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" onClick={() => setSuccess(false)}></div>
+                                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-[#F5E6BE] p-8 rounded-[2.5rem] relative z-10 max-w-md w-full text-center text-[#3D2B1F] shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                                    <div className="w-20 h-20 bg-[#800000] text-[#F5E6BE] rounded-full flex items-center justify-center mx-auto mb-6"><Icon name="check-circle-2" size={40} /></div>
+                                    <h3 className="text-3xl font-serif font-bold text-[#800000] mb-2">Registration Success!</h3>
+                                    <p className="mb-6 opacity-60">Your data has been synced to the portal.</p>
+                                    
+                                    <div className="bg-white p-6 rounded-2xl border-2 border-dashed border-[#800000]/30 my-6 text-left">
+                                        <div className="text-center border-b pb-4 mb-4">
+                                            <h4 className="text-maroon font-serif font-bold text-xl">Entry Pass 2026</h4>
+                                            <p className="text-[8px] uppercase tracking-widest opacity-50">CU Management Department</p>
+                                        </div>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex justify-between"><span>Guest</span><span className="font-bold">{form.Name}</span></div>
+                                            <div className="flex justify-between"><span>Batch</span><span className="font-bold">{form.Session_Batch}</span></div>
+                                            <div className="flex justify-between"><span>Guests</span><span className="font-bold">+{form.Guests}</span></div>
+                                            <div className="flex justify-between"><span>TRX ID</span><span className="font-bold text-maroon">{form.Transaction_ID}</span></div>
+                                        </div>
+                                        <div className="mt-6 pt-4 border-t border-[#3D2B1F]/10 font-mono text-xs tracking-[0.5em] text-center">|||| ||| || |||||</div>
+                                    </div>
+                                    
+                                    <button onClick={() => setSuccess(false)} className="bg-[#800000] text-[#F5E6BE] px-10 py-3 rounded-full font-bold shadow-xl">Close Window</button>
+                                </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
+                </section>
+            );
+        };
+
+        const Game = () => {
+            // CONFIG: MINI GAME LOGIC
+            // This is a basic HTML5 Canvas game. You can adjust speed or spawn rates here.
+            const canvasRef = useRef(null);
+            const [state, setState] = useState('idle');
+            const [score, setScore] = useState(0);
+
+            useEffect(() => {
+                if (state !== 'playing') return;
+                const c = canvasRef.current; const ctx = c.getContext('2d');
+                let basket = { x: 260, y: 340, w: 80, h: 40 }; let items = []; let id;
+                const loop = () => {
+                    ctx.clearRect(0,0,600,400); ctx.fillStyle='#800000'; ctx.fillRect(basket.x, basket.y, basket.w, basket.h);
+                    if (Math.random() < 0.02) items.push({ x: Math.random()*580, y: 0, type: Math.random()>0.8?'bomb':'date' });
+                    items.forEach((it, i) => {
+                        it.y += 4; ctx.fillStyle = it.type==='date'?'#3D2B1F':'#000';
+                        ctx.beginPath(); ctx.arc(it.x, it.y, 10, 0, 7); ctx.fill();
+                        if (it.y > 340 && it.x > basket.x && it.x < basket.x + 80) {
+                            if (it.type==='date') setScore(s=>s+10); else setState('ended');
+                            items.splice(i,1);
+                        } else if (it.y > 400) items.splice(i,1);
+                    });
+                    id = requestAnimationFrame(loop);
+                };
+                loop();
+                const mv = (e) => { const r = c.getBoundingClientRect(); const x = (e.clientX || e.touches?.[0].clientX) - r.left; basket.x = Math.max(0, Math.min(520, x - 40)); };
+                c.addEventListener('mousemove', mv); c.addEventListener('touchmove', mv);
+                return () => { cancelAnimationFrame(id); c.removeEventListener('mousemove', mv); c.removeEventListener('touchmove', mv); };
+            }, [state]);
+
+            return (
+                <section id="game" className="py-24 bg-[#F5E6BE] text-[#3D2B1F]">
+                    <div className="max-w-2xl mx-auto px-6 text-center">
+                        <h2 className="text-4xl font-serif font-bold mb-8">Spirit of Giving Game</h2>
+                        <div className="bg-[#3D2B1F] p-4 rounded-t-3xl text-[#F5E6BE] flex justify-between"><span>Score: {score}</span></div>
+                        <div className="bg-white h-[400px] rounded-b-3xl relative overflow-hidden shadow-2xl border-x-8 border-b-8 border-[#3D2B1F]">
+                            <canvas ref={canvasRef} width={600} height={400} className="w-full h-full" />
+                            {state !== 'playing' && (
+                                <div className="absolute inset-0 bg-[#3D2B1F]/90 flex flex-col items-center justify-center text-[#F5E6BE] p-6">
+                                    <h3 className="text-2xl font-serif mb-4">{state==='idle'?'Date Catcher':'Game Over!'}</h3>
+                                    <button onClick={() => { setScore(0); setState('playing'); }} className="bg-[#800000] px-10 py-3 rounded-full font-bold">Start Playing</button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const Logistics = () => (
+            <section id="logistics" className="py-24 bg-[#3D2B1F] text-[#F5E6BE]">
+                <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
+                    <div>
+                        <h2 className="text-4xl sm:text-5xl font-serif font-bold mb-10">Event Logistics</h2>
+                        <div className="space-y-8">
+                            <div className="flex gap-6"><div className="w-12 h-12 bg-[#800000] rounded-2xl flex items-center justify-center shrink-0"><Icon name="map-pin" /></div><div><h4 className="text-xl font-bold">Venue Location</h4><p className="opacity-60">Iqbal Convention Hall, Roufabad, Chittagong.</p></div></div>
+                            <div className="flex gap-6"><div className="w-12 h-12 bg-[#800000] rounded-2xl flex items-center justify-center shrink-0"><Icon name="clock" /></div><div><h4 className="text-xl font-bold">Timing</h4><p className="opacity-60">Friday, March 6, 2026. 5:30 PM Onwards.</p></div></div>
+                        </div>
+                    </div>
+                    <div className="h-[400px] lg:h-auto bg-white/5 rounded-[2.5rem] overflow-hidden border-4 border-white/10 relative">
+                        <div className="absolute inset-0 bg-[url('https://picsum.photos/seed/map/800/800')] bg-cover opacity-20 grayscale"></div>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-12">
+                            <Icon name="map-pin" size={48} className="text-[#800000] mb-4 animate-bounce" />
+                            <h3 className="text-2xl font-serif font-bold">Iqbal Convention Hall</h3>
+                            <p className="opacity-70">Roufabad, Chittagong</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+
+        const App = () => (
+            <div className="scroll-smooth">
+                <Navbar />
+                <Hero />
+                <InfoSection />
+                <Register />
+                <Game />
+                <Logistics />
+                <footer className="py-12 bg-black text-center opacity-40 text-[10px] tracking-[0.5em] uppercase">© 2026 CU Management Department</footer>
+            </div>
+        );
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
