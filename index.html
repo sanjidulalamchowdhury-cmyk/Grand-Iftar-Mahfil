@@ -80,6 +80,7 @@
         // --- LINKS ---
         const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/1GWB4FmBiF3HWszjG5ErdKCTDLQS39-_b65zyrDsiiX0/viewform?pli=1&pli=1&edit_requested=true";
         const MAP_URL = "https://maps.app.goo.gl/PqhE76MEse51oLRS7";
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/1MJJeiG2NM0opZcQHuzSqOo3N4bRCkvwczzWCJe8OP4g/edit?usp=sharing";
 
         const Icon = ({ name, size = 24, className = "" }) => {
             const iconRef = useRef(null);
@@ -105,6 +106,7 @@
                 { name: 'Home', href: '#home' },
                 { name: 'Info', href: '#info' },
                 { name: 'Register', href: '#register' },
+                { name: 'Guest List', href: '#status' },
                 { name: 'Fun Zone', href: '#games' },
                 { name: 'Logistics', href: '#logistics' },
             ];
@@ -214,10 +216,11 @@
                     <div className="grid lg:grid-cols-2 gap-12">
                         <div className="space-y-8">
                             <div className="bg-white p-8 rounded-3xl shadow-xl border-l-8 border-[#800000]">
-                                <h3 className="text-2xl font-serif font-bold text-[#800000] mb-4">Dear Alumni</h3>
-                                <p className="text-lg leading-relaxed opacity-80 mb-4">Assalamualaikum. Ramadan Kareem!</p>
-                                <p className="text-md leading-relaxed opacity-80">You're requested to fill the form below as a part of the registration process for <strong>"Grand Iftar Mahfil-2026"</strong>, organized by the Department of Management, University of Chittagong.</p>
-                                <p className="mt-4 font-bold">We are expecting your presence on 6th March, 2026.</p>
+                                <h3 className="text-2xl font-serif font-bold text-[#800000] mb-4">🌙 Grand Iftar Mahfil 2026 🌙</h3>
+                                <p className="text-lg leading-relaxed opacity-80 mb-4">Ramadan Kareem!</p>
+                                 <p className="text-lg leading-relaxed opacity-80 mb-4">The Department of Management, University of Chittagong, joyfully welcomes our respected teachers, cherished alumni, and beloved students to gather once again for the blessed occasion of <strong>The Grand Iftar Mahfil.</strong></p>
+                                <p className="text-md leading-relaxed opacity-80">This sacred evening will be shared with 100 orphan children from Chittagong city, making the gathering even more meaningful. Your presence will enrich the spirit of unity, gratitude, and joy as we celebrate the blessings of Ramadan together.</p>
+                                <p className="mt-4 font-bold">👉 We look forward to seeing you at this special reunion of the Management family.</p>
                             </div>
 
                             <div className="bg-white p-8 rounded-3xl shadow-xl">
@@ -231,7 +234,7 @@
                                     </div>
                                     <div className="pt-4 border-t">
                                         <p className="font-bold text-[#800000]">Bank Account:</p>
-                                        <p>A/C Name: Ayon dev nath</p>
+                                        <p>A/C Name: Ayon Dev Nath</p>
                                         <p>A/C No: 5834101010083</p>
                                         <p>Pubali Bank PLC, Alif Plaza (1st Floor), 2 No. Gate Bazar, Jobra, Fatepur, Hathazari, Chattogram.</p>
                                     </div>
@@ -244,7 +247,7 @@
                                 <h3 className="text-xl font-bold mb-6 flex items-center gap-2"><Icon name="phone" /> Contact Queries</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                                     <p>Ayon Dev Nath: <br/><strong>01868251681</strong></p>
-                                    <p>Shuaeb Ibn Siddiq: <br/><strong>01842408335</strong></p>
+                                    <p>Shuaeb Ibn Siddiq : <br/><strong>01842408335</strong></p>
                                     <p>Shifaul Haquye Shihab: <br/><strong>01717615281</strong></p>
                                     <p>Abdullah Al Maruf: <br/><strong>01632951437</strong></p>
                                     <p>Sheikh Wazedur Rahman (Akash): <br/><strong>01624336399</strong></p>
@@ -294,6 +297,46 @@
                             <p className="text-sm opacity-50 uppercase tracking-[0.2em]">
                                 Redirects to official Google Form
                             </p>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+        );
+
+        const RegistrationStatus = () => (
+            <section id="status" className="py-24 bg-[#F5E6BE] text-[#3D2B1F]">
+                <div className="max-w-7xl mx-auto px-6 text-center">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl sm:text-5xl font-serif font-bold mb-4">Registration Status</h2>
+                        <div className="w-24 h-1 bg-[#800000] mx-auto"></div>
+                    </div>
+
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        className="bg-white p-10 sm:p-16 rounded-[2.5rem] shadow-2xl max-w-3xl mx-auto border-t-8 border-[#800000]"
+                    >
+                        <div className="w-20 h-20 bg-[#800000]/10 text-[#800000] rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Icon name="users" size={40} />
+                        </div>
+                        <h3 className="text-2xl sm:text-3xl font-serif font-bold mb-4 text-[#800000]">Live Guest List</h3>
+                        <p className="text-lg opacity-70 mb-10">
+                            Curious to see who else is joining? Click the button below to view the live registration sheet and check the current count of participants.
+                        </p>
+                        
+                        <a 
+                            href={SHEET_URL} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-3 bg-[#3D2B1F] text-[#F5E6BE] px-10 py-4 rounded-full font-bold text-lg hover:bg-black transition-all shadow-xl group"
+                        >
+                            <Icon name="file-spreadsheet" className="group-hover:scale-110 transition-transform" />
+                            View Registered Guests
+                        </a>
+                        
+                        <div className="mt-8 flex items-center justify-center gap-2 text-sm opacity-50 italic">
+                            <Icon name="info" size={14} />
+                            <span>Updated in real-time as people register</span>
                         </div>
                     </motion.div>
                 </div>
@@ -497,9 +540,10 @@
                 <Hero />
                 <InfoSection />
                 <RegisterSection />
+                <RegistrationStatus />
                 <GamesSection />
                 <Logistics />
-                <footer className="py-12 bg-black text-center opacity-40 text-[10px] tracking-[0.5em] uppercase">© Sanjidul CU Management Department</footer>
+                <footer className="py-12 bg-black text-center opacity-40 text-[10px] tracking-[0.5em] uppercase">© Sanjiduld CU Management Department</footer>
             </div>
         );
 
